@@ -8,8 +8,10 @@ class Core {
         
         this.stage = new createjs.Stage(canvas);
         
+        this.stage.enableMouseOver(25);
         createjs.Ticker.setFPS(25);
         createjs.Ticker.addEventListener("tick", this.update.bind(this));
+
 
         window.addEventListener( 'resize', this.onWindowResize.bind(this), false );
     }
