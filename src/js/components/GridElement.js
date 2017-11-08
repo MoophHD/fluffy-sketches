@@ -41,27 +41,59 @@ class GridElement {
         this._shape.userData.color = this._shapeColor;
         this._shape.userData.shape = this._shapeType;
         this._shape.userData.wave = this.wave.bind(this);
-
+        this._shape.userData.reset = this.reset.bind(this);
+        
+        
         this._shape.x = posX;
         this._shape.y = posY;
         
+        this._posX = posX;
+        this._posY = posY;
         this.MAX_SCALE = 1.75;
         this.MAX_DARKENCOLOR = 1.5;
         this.shapeTypeStr = type;
+
+        this.animating = false;
+        this.scale = 1;
     }  
 
     wave(coef=1) {
+        this.animateScale(coef*this.MAX_SCALE);
+    }
+
+    reset() {
+        if (this.scale == 1) return;
+        if (this.animating ) {
+            let intervalId = setInterval(() => {
+                if(!this.animating) {
+                    this.animateScale(1);
+                    clearInterval(intervalId);
+                    return;
+                }
+            }, 100)
+        } else {
+            this.animateScale(1);
+        }
+    }
+    
+    animateScale(to) {
+        this.scale = to;
+        this.animating = true;
+
         createjs.Tween.get(this._shape)
         .to({
-            scaleX: coef*this.MAX_SCALE,
-            scaleY: coef*this.MAX_SCALE}, 
-        350, createjs.Ease.get(1));
+            scaleX: to,
+            scaleY: to}, 
+        350, createjs.Ease.get(1))
+        .call(() => this.animating = false)
+    }
 
+    get shape() {
+        return this._shape;
     }
 
     init(scene) {
         scene.addChild(this._shape)
-
         this._shape.regX = this.reg.x;
         this._shape.regY = this.reg.y;
     }

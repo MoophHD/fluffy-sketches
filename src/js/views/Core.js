@@ -24,6 +24,10 @@ class Core {
     update(event) {
         this.stage.update(event);
     }
+
+    get screenBounds() {
+        return {h: this._canvas.height,w:this._canvas.width}
+    }
 }
 
 export default Core;
