@@ -1,4 +1,5 @@
 import createjs from 'createjs-module'
+import parseRgb from '../gist/parseRgb'
 
 class GridElement {
 
@@ -16,7 +17,7 @@ class GridElement {
 
         this.reg = {};
 
-        this._shapeColor = boldGraphics.beginFill("DeepSkyBlue").command;
+        this._shapeColor = boldGraphics.beginFill(createjs.Graphics.getRGB(0, 191, 255)).command;
         this._shapeType;
         switch(type) {
             case "square":
@@ -49,7 +50,7 @@ class GridElement {
         
         this._posX = posX;
         this._posY = posY;
-        this.MAX_SCALE = 1.75;
+        this.MAX_SCALE = 1.45;
         this.MAX_DARKENCOLOR = 1.5;
         this.shapeTypeStr = type;
 
@@ -59,24 +60,34 @@ class GridElement {
 
     wave(coef=1) {
         this.animateScale(coef*this.MAX_SCALE);
+        this.animateColor(coef*this.MAX_DARKENCOLOR);
     }
 
     reset() {
         if (this.scale == 1) return;
-        if (this.animating ) {
-            let intervalId = setInterval(() => {
-                if(!this.animating) {
-                    this.animateScale(1);
-                    clearInterval(intervalId);
-                    return;
-                }
-            }, 100)
-        } else {
-            this.animateScale(1);
-        }
+        this.animateScale(1);        
+    }
+
+    animateColor(to) {
+        let startCl = parseRgb(this._shapeColor.style);
+        let finishCl = {};
+        finishCl.r = Math.min(startCl.r*to, 256);
+        finishCl.g = Math.min(startCl.g*to, 256);
+        finishCl.b = Math.min(startCl.b*to, 256);
+        
+        createjs.Tween.get(startCl)
+        .to(finishCl,
+        350, createjs.Ease.get(1))
+        .addEventListener("change", () => {
+            console.log(startCl);
+            this._shape.graphics.command.style = createjs.Graphics.getRGB(startCl.r, startCl.g, startCl.b)
+        })
+        .call(() => this.animating = false)
     }
     
     animateScale(to) {
+        if (this.animating) return;
+
         this.scale = to;
         this.animating = true;
 

@@ -32,23 +32,23 @@ class Main extends Core {
 
         let shapeH = ~~(this.screenBounds.h/SHAPES_Y)-(SHAPES_Y-1)*GAP;
         let shapeW = ~~(this.screenBounds.w/SHAPES_X)-(SHAPES_X-1)*GAP;
-        console.log(shapeH);
 
-        let shapesArr = [], gap,x,y;
-        x = shapeH / 2;
-        y = shapeW / 2;
+        let shapesArr = [],x,y;
+        x = shapeW/2;
+        y = shapeH/2;
         for (let i = 0; i < SHAPES_Y; i++) {
             shapesArr[i] = [];
+            x = shapeW/2;
             for (let j = 0; j < SHAPES_X; j++) {
-                console.log(shapeH*i + Math.min(1, i)*GAP);
-                shapesArr[i][j] = new GridElement(x + shapeW*j + GAP*j, y + shapeH*i + GAP*i, "square", {width:shapeW, height:shapeH});
+                shapesArr[i][j] = new GridElement(x, y, "square", {width:shapeW, height:shapeH});
                 shapesArr[i][j].init(this.stage);
                 shapesArr[i][j].shape.addEventListener("mouseout", (e) => {
                     e.target.userData.reset();
                 })
+                x = x+ shapeW+GAP+5;
             }
+            y = y + shapeW+GAP;
         }
-        console.log(shapesArr);
 
 
         // let shape = new GridElement(500, 250, "square", {height: 100, width: 50});
