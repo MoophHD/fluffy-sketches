@@ -39,7 +39,6 @@ class GridElement {
 
         
         this._shape.userData = {};
-        this._shape.userData.color = this._shapeColor;
         this._shape.userData.shape = this._shapeType;
         this._shape.userData.wave = this.wave.bind(this);
         this._shape.userData.reset = this.reset.bind(this);
@@ -51,8 +50,10 @@ class GridElement {
         this._posX = posX;
         this._posY = posY;
         this.MAX_SCALE = 1.45;
-        this.MAX_DARKENCOLOR = 1.5;
+        this.MAX_DARKENCOLOR = 1.3;
         this.shapeTypeStr = type;
+        console.log(this._shapeColor)
+        this.startColor = parseRgb(this._shapeColor.style);
 
         this.animating = false;
         this.scale = 1;
@@ -60,33 +61,37 @@ class GridElement {
 
     wave(coef=1) {
         this.animateScale(coef*this.MAX_SCALE);
-        this.animateColor(coef*this.MAX_DARKENCOLOR);
+
+        let clCoef = coef*this.MAX_DARKENCOLOR;
+        let clTo = {...parseRgb(this._shapeColor.style)};
+        clTo.r = Math.min(clTo.r*clCoef, 256);
+        clTo.g = Math.min(clTo.g*clCoef, 256);
+        clTo.b = Math.min(clTo.b*clCoef, 256);
+
+        this.animateColor(clTo);
     }
 
     reset() {
         if (this.scale == 1) return;
-        this.animateScale(1);        
+
+        this.animateScale(1);  
+        this.animateColor(this.startColor);      
     }
 
     animateColor(to) {
         let startCl = parseRgb(this._shapeColor.style);
-        let finishCl = {};
-        finishCl.r = Math.min(startCl.r*to, 256);
-        finishCl.g = Math.min(startCl.g*to, 256);
-        finishCl.b = Math.min(startCl.b*to, 256);
-        
+
         createjs.Tween.get(startCl)
-        .to(finishCl,
+        .to(to,
         350, createjs.Ease.get(1))
         .addEventListener("change", () => {
-            console.log(startCl);
-            this._shape.graphics.command.style = createjs.Graphics.getRGB(startCl.r, startCl.g, startCl.b)
+            this._shape.graphics.command.style = createjs.Graphics.getRGB(~~(startCl.r), ~~(startCl.g), ~~(startCl.b));
         })
         .call(() => this.animating = false)
     }
     
     animateScale(to) {
-        if (this.animating) return;
+        // if (this.animating) return;
 
         this.scale = to;
         this.animating = true;

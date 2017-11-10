@@ -26,7 +26,7 @@ class Main extends Core {
         circle.userData.c = circleObj;
 
         const SHAPES_X = 10;
-        const SHAPES_Y = 5;
+        const SHAPES_Y = 3;
 
         const GAP = 1;
 
@@ -45,9 +45,9 @@ class Main extends Core {
                 shapesArr[i][j].shape.addEventListener("mouseout", (e) => {
                     e.target.userData.reset();
                 })
-                x = x+ shapeW+GAP+5;
+                x = x+ shapeW+GAP;
             }
-            y = y + shapeW+GAP;
+            y = y + shapeH+GAP;
         }
 
 
