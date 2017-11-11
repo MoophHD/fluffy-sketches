@@ -7,23 +7,9 @@ import GridElement from './components/GridElement'
 class Main extends Core {
     constructor(canvas) {
         super(canvas);
-
-        let circle = new createjs.Shape();
-        let myGraphics = new createjs.Graphics();
         
-        let fillObj = myGraphics.beginFill("DeepSkyBlue").command;
-        let circleObj = myGraphics.drawCircle(0, 0, 50).command;
-      
-        circle.graphics.append(createjs.Graphics.beginCmd)
-        .append(circleObj)
-        .append(fillObj);
-
-        circle.x = 100;
-        circle.y = 100;
-
-        circle.userData = {};
-        circle.userData.f = fillObj;
-        circle.userData.c = circleObj;
+        let shapeContainer = new createjs.Container();
+        this.stage.addChild(shapeContainer);
 
         const SHAPES_X = 10;
         const SHAPES_Y = 3;
@@ -41,18 +27,21 @@ class Main extends Core {
             x = shapeW/2;
             for (let j = 0; j < SHAPES_X; j++) {
                 shapesArr[i][j] = new GridElement(x, y, "square", {width:shapeW, height:shapeH});
-                shapesArr[i][j].init(this.stage);
+                shapesArr[i][j].init(shapeContainer);
                 shapesArr[i][j].shape.addEventListener("mouseout", (e) => {
                     e.target.userData.reset();
                 })
-                x = x+ shapeW+GAP;
+                x = x+shapeW+GAP;
             }
-            y = y + shapeH+GAP;
+            y = y+shapeH+GAP;
         }
 
-
-        // let shape = new GridElement(500, 250, "square", {height: 100, width: 50});
-        // shape.init(this.stage);
+        let lastGridElem =  shapesArr[SHAPES_Y-1][SHAPES_X-1];
+        console.log(lastGridElem);
+        console.log(shapeContainer);
+        shapeContainer.x = (this.screenBounds.w - lastGridElem._posX  - lastGridElem._shapeType.w/2)/2; // - lastGridElem._shapeType.w
+        shapeContainer.y = (this.screenBounds.h - lastGridElem._posY - lastGridElem._shapeType.h/2)/2;
+        
 
         this.stage.enableMouseOver(25);
         this.stage.addEventListener("mouseover", (e) => {

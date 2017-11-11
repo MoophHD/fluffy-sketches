@@ -52,15 +52,18 @@ class GridElement {
         this.MAX_SCALE = 1.45;
         this.MAX_DARKENCOLOR = 1.3;
         this.shapeTypeStr = type;
-        console.log(this._shapeColor)
         this.startColor = parseRgb(this._shapeColor.style);
 
         this.animating = false;
         this.scale = 1;
+
+        this.isStartColor = true;
     }  
 
     wave(coef=1) {
         this.animateScale(coef*this.MAX_SCALE);
+
+        this.container.setChildIndex(this._shape, this.container.numChildren - 1);
 
         let clCoef = coef*this.MAX_DARKENCOLOR;
         let clTo = {...parseRgb(this._shapeColor.style)};
@@ -72,13 +75,15 @@ class GridElement {
     }
 
     reset() {
-        if (this.scale == 1) return;
+        if (this.scale == 1 && this.isStartColor) return;
 
         this.animateScale(1);  
-        this.animateColor(this.startColor);      
+        this.animateColor(this.startColor);
+        this.isStartColor = true;
     }
 
     animateColor(to) {
+        this.isStartColor = false;
         let startCl = parseRgb(this._shapeColor.style);
 
         createjs.Tween.get(startCl)
@@ -94,7 +99,6 @@ class GridElement {
         // if (this.animating) return;
 
         this.scale = to;
-        this.animating = true;
 
         createjs.Tween.get(this._shape)
         .to({
@@ -108,8 +112,10 @@ class GridElement {
         return this._shape;
     }
 
-    init(scene) {
-        scene.addChild(this._shape)
+    init(container) {
+        container.addChild(this._shape)
+
+        this.container = container;
         this._shape.regX = this.reg.x;
         this._shape.regY = this.reg.y;
     }
