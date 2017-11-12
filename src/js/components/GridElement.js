@@ -26,11 +26,11 @@ class GridElement {
                 this._shapeType = boldGraphics.drawRect( 0, 0, props.width, props.height ).command;
                 break;
             case "circle":
-                this.reg.x = this.reg.y = props.radius/2;
+                this.reg.x = this.reg.y = 0;
                 this._shapeType = boldGraphics.drawCircle( 0, 0, props.radius ).command;
                 break;
             default:
-                this._shapeType = boldGraphics.drawCircle( 0, 0, props.width, props.height ).command;
+                this._shapeType = boldGraphics.drawRect( 0, 0, props.width, props.height ).command;
         }
 
         this._shape.graphics.append( createjs.Graphics.beginCmd )
